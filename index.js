@@ -209,3 +209,38 @@ async function addEmployee() {
       startApp();
   }
 };
+
+//update employee
+async function updateRole() {
+  try {
+      const [resEmployees] = await db.query('SELECT employee.id, employee.first_name, employee.last_name, roles.title FROM employee LEFT JOIN roles ON employee.role_id = roles.id');
+      const [resRoles] = await db.query('SELECT * FROM roles');
+
+      const answers = await prompt([
+          {
+              type: 'list',
+              name: 'employee',
+              message: 'Please select the employee you would like to update:',
+              choices: resEmployees.map(employee => ({ name: `${employee.first_name} ${employee.last_name}`, value: employee.id }))
+          },
+          {
+              type: 'list',
+              name: 'role',
+              message: 'Please select the new role for the update:',
+              choices: resRoles.map(role => role.title)
+          }
+      ]);
+
+      const employee = resEmployees.find(employee => employee.id === answers.employee);
+      const role = resRoles.find(role => role.title === answers.role);
+
+      await db.query('UPDATE employee SET role_id = ? WHERE id = ?', [role.id, answers.employee]);
+
+      console.log(`You have successfully updated ${employee.first_name} ${employee.last_name}'s role to ${role.title} in the database!`);
+      startApp();
+  } catch (error) {
+      console.error('Error updating role:', error);
+      startApp();
+  }
+}
+
