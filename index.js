@@ -69,48 +69,33 @@ async function startApp() {
 };
 
 // view all table from departments
-const viewAllDepartments = function() {
-  db.query("SELECT * FROM departments", (err, res) => {
-    try {
-      if (err) throw err;
-      const table = new Table({
-        head: ["ID", "Department Name"]
-      });
-      res.forEach(row => {
-        table.push([row.id, row.name]);
-      });
-      console.log(table.toString());
-      initialApp();
-    } catch (error) {
-      console.error(error);
-      initialApp();
-    }
-  });
-};
+async function allDepartment() {
+  const [rows] = await db.query('SELECT * FROM departments');
+  console.table(rows);
+  startApp();
+}
+
 // view all roles
 const viewAllRoles = function() {
-  db.query(
-    `SELECT roles.id, roles.title, departments.department_name, roles.salary
-     FROM roles
-     INNER JOIN departments ON roles.department_id = department.id`,
-    (err, res) => {
-      try {
-        if (err) throw err;
-        const table = new Table({
-          head: ["ID", "Job Title", "Department Name", "Salary"]
-        });
-        res.forEach(row => {
-          table.push([row.id, row.title, row.department_name, row.salary]);
-        });
-        console.log(table.toString());
-        initialApp();
-      } catch (error) {
-        console.error(error);
-        initialApp();
-      }
-    }
-  );
+  async function allRoles() {
+    const [rows] = await db.query('SELECT roles.title, roles.id, departments.department_name, roles.salary FROM roles JOIN departments ON roles.department_id = departments.id');
+    console.table(rows);
+    startApp();
+  }
 };
+
 // view all employees
+async function allEmployees() {
+  const query = `
+      SELECT e.id, e.first_name, e.last_name, r.title, d.department_name, r.salary, CONCAT(m.first_name, " ", m.last_name) AS manager_name
+      FROM employee e
+      LEFT JOIN roles r ON e.role_id = r.id
+      LEFT JOIN departments d ON r.department_id = d.id
+      LEFT JOIN employee m ON e.manager_id = m.id;
+      `;
+  const [rows] = await db.query(query);
+  console.table(rows);
+  startApp();
+};
 
 initialApp();
