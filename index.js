@@ -161,3 +161,51 @@ async function addRole() {
   startApp();
 };
   
+//add employee
+async function addEmployee() {
+  try {
+      const rolesQuery = 'SELECT id, title FROM roles';
+      const [rolesRes] = await db.query(rolesQuery);
+      const roles = rolesRes.map(({ id, title }) => ({ name: title, value: id }));
+
+      const managersQuery = 'SELECT id, first_name, last_name FROM employee WHERE manager_id IS NULL';
+      const [managersRes] = await db.query(managersQuery);
+      const managers = managersRes.map(({ id, first_name, last_name }) => ({ name: `${first_name} ${last_name}`, value: id }));
+
+      const response = await prompt([
+          {
+              type: 'input',
+              name: 'firstName',
+              message: 'Enter the first name of employee:',
+          },
+          {
+              type: 'input',
+              name: 'lastName',
+              message: 'Enter the last name of employee:',
+          },
+          {
+              type: 'list',
+              name: 'roleId',
+              message: 'Select role for employee:',
+              choices: roles,
+          },
+          {
+              type: 'list',
+              name: 'managerId',
+              message: 'Select manager for this employee:',
+              choices: [
+                  { name: 'None', value: null },
+                  ...managers,
+              ],
+          },
+      ]);
+
+      await db.query('INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)', [response.firstName, response.lastName, response.roleId, response.managerId]);
+
+      console.log('You have successfully added the employee to the database!');
+      startApp();
+  } catch (error) {
+      console.error('Error adding employee:', error);
+      startApp();
+  }
+};
