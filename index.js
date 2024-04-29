@@ -1,64 +1,70 @@
-const inquirer = require("inquirer");
-const mysql = require("mysql2");
-const Table = require("cli-table3");
+const mysql = require('mysql2/promise');
+const { prompt } = require('inquirer');
 // connect to databases
-const db = mysql.createConnection(
-  {
-    host: "localhost",
-    user: "root",
-    password: "Dumpling6116",
-    database: "employee_tracker"
-  },
-  console.log(`Connected to the Employee tracker database.`)
-);
-// initial app start
-const initialApp = async function() {
-  try {
-    const response = await inquirer.prompt({
-      name: "options",
-      type: "list",
-      message: "What would you like to do?",
-      choices: [
-        "View All Departments",
-        "Add a Department",
-        "View All Roles",
-        "Add A Role",
-        "View All Employees",
-        "Add An Employee",
-        "Update An Employee Role",
-        "Quit"
-      ]
-    });
+let db;
 
-    switch (response.options) {
-      case "View All Departments":
-        viewAllDepartments();
-        break;
-      case "Add a Department":
-        addDepartment();
-        break;
-      case "View All Roles":
-        viewAllRoles();
-        break;
-      case "Add A Role":
-        addRole();
-        break;
-      case "View All Employees":
-        viewAllEmployees();
-        break;
-      case "Add An Employee":
-        addEmployee();
-        break;
-      case "Update An Employee Role":
-        updateEmployeeRole();
-        break;
-      case "Quit":
-        console.log("Thank you for using the Employee Manager App!");
-        db.end(); // Close the database connection
-        break;
+(async () => {
+    try {
+        db = await mysql.createConnection({
+            host: 'localhost',
+            user: 'root',
+            password: 'Dumpling6116',
+            database: 'employee_tracker',
+        });
+        console.log('Connected to the Employee Manager database.');
+        startApp();
+    } catch (err) {
+        console.error('Error connecting to the database:', err);
     }
+})();
+
+// initial app start
+async function startApp() {
+  try {
+      const response = await prompt({
+          type: 'list',
+          name: 'options',
+          message: 'What would you like to do? Choose below',
+          choices: [
+              'View All Departments',
+              'Add Department',
+              'View All Roles',
+              'Add Role',
+              'View All Employees',
+              'Add Employee',
+              'Update Employee Role',
+              'Exit'
+          ],
+      });
+
+      switch (response.options) {
+          case 'View All Departments':
+              await allDepartment();
+              break;
+          case 'Add Department':
+              await addDepartment();
+              break;
+          case 'View All Roles':
+              await allRoles();
+              break;
+          case 'Add Role':
+              await addRole();
+              break;
+          case 'View All Employees':
+              await allEmployees();
+              break;
+          case 'Add Employee':
+              await addEmployee();
+              break;
+          case 'Update Employee Role':
+              await updateRole();
+              break;
+          case 'Exit':
+              console.log('Exited successfully! Goodbye!');
+              process.exit();
+      }
   } catch (error) {
-    console.error("An error occurred:", error);
+      console.error('Error:', error);
   }
 };
 
