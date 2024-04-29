@@ -12,7 +12,7 @@ const db = mysql.createConnection(
 );
 
 const initialApp = async function() {
-  const response = await inquirer.prompt( {
+  const response = await inquirer.prompt( [ {
     type: "list",
     name: "options",
     message: "What would you like to do?",
@@ -25,7 +25,47 @@ const initialApp = async function() {
       "Add Employee",
       "Update Employee Role",
       "Quit"
-    ],
+        ],
+      }
+    ]
+  )
+  switch (response.options) {
+    case "View All Departments":
+        allDepts();
+        break;
+    case "Add Department":
+        addDept();
+        break;
+    case "View All Roles":
+        allRoles();
+        break;
+    case "Add Role":
+        addRole();
+        break;
+    case "View All Employees":
+        allEmployees();
+        break;
+    case "Add Employee":
+        addEmployee();
+        break;
+    case "Update Employee Role":
+        updateRole();
+        break;
+    case "Exit":
+        console.log(chalk.magenta("Exited successfully! Goodbye!"));
+        process.exit();
   }
-)};
+};
+
+// view all table from departments
+async function deptAll() {
+  try {
+      const query = "SELECT * FROM departments";
+      const [rows] = await db.query(query);
+      console.table(rows);
+  } catch (error) {
+      console.error(error);
+  }
+  initialApp();
+};
 

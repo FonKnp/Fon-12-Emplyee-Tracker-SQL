@@ -7,9 +7,9 @@ VALUES
   ("Finance"),
   ("Human Resources");
 
-INSERT INTO role (title, salary, department_id)
+INSERT INTO roles (title, salary, department_id)
 VALUES
-  ("Chief Executive Officer", 200000.00, 5);
+  ("Chief Executive Officer", 200000.00, 5),
   ("Legal Manager", 80000.00, 5),
   ("Customer Service Manager", 50000.00, 2),
   ("Marketing Manager", 75000.00, 1),
