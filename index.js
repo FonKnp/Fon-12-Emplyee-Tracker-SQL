@@ -1,5 +1,6 @@
 const inquirer = require("inquirer");
 const mysql = require("mysql2");
+const Table = require("cli-table3");
 // connect to databases
 const db = mysql.createConnection(
   {
@@ -52,8 +53,9 @@ const initialApp = async function() {
         updateRole();
         break;
     case "Exit":
-        console.log(chalk.magenta("Exited successfully! Goodbye!"));
-        process.exit();
+      console.log("Thank you for using the Employee Manager App!");
+      db.end(); // Close the database connection
+      break;
   }
 };
 
@@ -108,10 +110,11 @@ async function addDepartment() {
       const res = await db.query(query);
 
       console.log(`You have successfully added department ${response.name} to the database!`);
-      initialApp();;
+      initialApp();
   } catch (err) {
-      console.error(chalk.red("Error adding department:", err));
+      console.error("Error adding department:", err);
       initialApp();
   }
 };
 
+initialApp();
