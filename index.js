@@ -76,13 +76,12 @@ async function allDepartment() {
 }
 
 // view all roles
-const viewAllRoles = function() {
-  async function allRoles() {
-    const [rows] = await db.query('SELECT roles.title, roles.id, departments.department_name, roles.salary FROM roles JOIN departments ON roles.department_id = departments.id');
-    console.table(rows);
-    startApp();
-  }
-};
+async function allRoles() {
+  const [rows] = await db.query('SELECT roles.title, roles.id, departments.department_name, roles.salary FROM roles JOIN departments ON roles.department_id = departments.id');
+  console.table(rows);
+  startApp();
+}
+
 
 // view all employees
 async function allEmployees() {
@@ -98,4 +97,4 @@ async function allEmployees() {
   startApp();
 };
 
-initialApp();
+startApp();
