@@ -97,4 +97,17 @@ async function allEmployees() {
   startApp();
 };
 
+//add department
+async function addDepartment() {
+  const response = await prompt({
+      type: 'input',
+      name: 'name',
+      message: 'What new department you like to create?'
+  });
+
+  await db.query('INSERT INTO departments (department_name) VALUES (?)', [response.name]);
+  console.log(`You have successfully added department ${response.name} to the database!`);
+  startApp();
+}
+
 startApp();
