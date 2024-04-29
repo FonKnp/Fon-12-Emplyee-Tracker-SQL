@@ -13,49 +13,52 @@ const db = mysql.createConnection(
 );
 // initial app start
 const initialApp = async function() {
-  const response = await inquirer.prompt( [ {
-    type: "list",
-    name: "options",
-    message: "What would you like to do?",
-    Choices: [
-      "View All Departments",
-      "Add Department",
-      "View All Roles",
-      "Add Role",
-      "View All Employees",
-      "Add Employee",
-      "Update Employee Role",
-      "Quit"
-        ],
-      }
-    ]
-  )
-  switch (response.options) {
-    case "View All Departments":
+  try {
+    const response = await inquirer.prompt({
+      name: "options",
+      type: "list",
+      message: "What would you like to do?",
+      choices: [
+        "View All Departments",
+        "Add a Department",
+        "View All Roles",
+        "Add A Role",
+        "View All Employees",
+        "Add An Employee",
+        "Update An Employee Role",
+        "Quit"
+      ]
+    });
+
+    switch (response.options) {
+      case "View All Departments":
         viewAllDepartments();
         break;
-    case "Add Department":
+      case "Add a Department":
         addDepartment();
         break;
-    case "View All Roles":
+      case "View All Roles":
         viewAllRoles();
         break;
-    case "Add Role":
+      case "Add A Role":
         addRole();
         break;
-    case "View All Employees":
+      case "View All Employees":
         viewAllEmployees();
         break;
-    case "Add Employee":
+      case "Add An Employee":
         addEmployee();
         break;
-    case "Update Employee Role":
-        updateRole();
+      case "Update An Employee Role":
+        updateEmployeeRole();
         break;
-    case "Exit":
-      console.log("Thank you for using the Employee Manager App!");
-      db.end(); // Close the database connection
-      break;
+      case "Quit":
+        console.log("Thank you for using the Employee Manager App!");
+        db.end(); // Close the database connection
+        break;
+    }
+  } catch (error) {
+    console.error("An error occurred:", error);
   }
 };
 
